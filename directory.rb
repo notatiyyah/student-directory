@@ -18,18 +18,20 @@ def input_students
 end
 
 def print_header
-    puts "The students of Villains Academy\n-------------"
-    # print banner
+  puts "The students of Villains Academy\n-------------"
+  # print banner
 end
 
 def print(students)
-    students.each { |student| puts "#{student[:name]} (#{student[:cohort]} cohort)" }
-    #print all students
+  students.each_with_index do |student,index| 
+    puts "#{index}. #{student[:name]} (#{student[:cohort]} cohort)"
+  end
+  #print all students
 end
 
 def print_footer(names)
-    puts "Overall, we have #{names.count} great students"
-    # print no. of students
+  puts "Overall, we have #{names.count} great students"
+  # print no. of students
 end
 
 students = input_students
