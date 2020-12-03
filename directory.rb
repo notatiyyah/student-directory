@@ -1,9 +1,28 @@
-def print_banner
+def input_students
+  puts "Please enter the names of the students"
+  puts "To finish, just hit return twice"
+  # create an empty array</span>
+  students = []
+  # get the first name</span>
+  name = gets.chomp
+  # while the name is not empty, repeat this code</span>
+  while !name.empty?
+    # add the student hash to the array</span>
+    students << {name: name, cohort: :november}
+    puts "Now we have #{students.count} student#{students.count == 1 ? "" : "s"}"
+    # get another name from the user</span>
+    name = gets.chomp
+  end
+  # return the array of students
+  return students
+end
+
+def print_header
     puts "The students of Villains Academy\n-------------"
     # print banner
 end
 
-def print_students(students)
+def print(students)
     students.each { |student| puts "#{student[:name]} (#{student[:cohort]} cohort)" }
     #print all students
 end
@@ -13,21 +32,7 @@ def print_footer(names)
     # print no. of students
 end
 
-students = [
-  {name: "Dr. Hannibal Lecter", cohort: :november},
-  {name: "Darth Vader", cohort: :november},
-  {name: "Nurse Ratched", cohort: :november},
-  {name: "Michael Corleone", cohort: :november},
-  {name: "Alex DeLarge", cohort: :november},
-  {name: "The Wicked Witch of the West", cohort: :november},
-  {name: "Terminator", cohort: :november},
-  {name: "Freddy Krueger", cohort: :november},
-  {name: "The Joker", cohort: :november},
-  {name: "Joffrey Baratheon", cohort: :november},
-  {name: "Norman Bates", cohort: :november}
-]
-# store all students' info in an array
-
-print_banner
-print_students(students)
+students = input_students
+print_header
+print(students)
 print_footer(students)
