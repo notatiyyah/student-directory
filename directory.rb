@@ -40,6 +40,14 @@ def print_students_beginning_with(students)
   end
 end
 
+def print_short_names(students)
+  students.each_with_index do |student,index|
+    if student[:name].length < 12
+      puts "#{index+1}. #{student[:name]} (#{student[:cohort]} cohort)"
+    end
+  end
+end
+
 def print_footer(names)
   puts "Overall, we have #{names.count} great students"
   # print no. of students
@@ -47,5 +55,5 @@ end
 
 students = input_students
 print_header
-print_students_beginning_with(students)
+print_short_names(students)
 print_footer(students)
