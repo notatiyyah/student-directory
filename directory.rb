@@ -1,3 +1,13 @@
+def get_extra_data
+  puts "List some of their hobbies"
+  hobbies = gets.chomp
+  puts "What is thier country of birth?"
+  country_of_birth = gets.chomp
+  puts "What's their height?"
+  height = gets.chomp
+  return hobbies, country_of_birth, height
+end
+
 def input_students
   puts "Please enter the names of the students"
   puts "To finish, just hit return twice"
@@ -9,7 +19,8 @@ def input_students
   # while the name is not empty, repeat this code</span>
   while !name.empty?
     # add the student hash to the array</span>
-    students << {name: name, cohort: :november}
+    hobbies, country_of_birth, height = get_extra_data
+    students << {name: name, cohort: :november, hobbies: hobbies, country_of_birth: country_of_birth, height: height}
     puts "Now we have #{students.count} student#{students.count == 1 ? "" : "s"}"
     # get another name from the user</span>
     name = gets.chomp
