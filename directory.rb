@@ -76,11 +76,30 @@ def print_footer(students)
   # print no. of students
 end
 
-students = input_students
-if students.length > 0
-  print_header
-  print_by_cohort(students)
-  print_footer(students)
-else
-  puts "There are no students at Villains Academy"
+def menu
+  students = []
+  loop do
+    puts "-------- Menu --------"
+    menu = ["Input the students", "Show the students", "Exit"]
+    menu.each_with_index {|option, index| puts "#{index+1}. #{option}" }
+    selection = gets.chomp
+    case selection
+      when "1"
+        students = input_students
+      when "2"
+        if students.length > 0
+          print_header
+          print_by_cohort(students)
+          print_footer(students)
+        else
+          puts "There are no students at Villains Academy"
+        end
+      when "3"
+        break
+      else
+        puts "I don't know what you mean, try again"
+    end
+  end
 end
+
+menu
