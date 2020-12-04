@@ -77,6 +77,10 @@ def print_footer(students)
 end
 
 students = input_students
-print_header
-print_by_cohort(students)
-print_footer(students)
+if students.length > 0
+  print_header
+  print_by_cohort(students)
+  print_footer(students)
+else
+  puts "There are no students at Villains Academy"
+end
