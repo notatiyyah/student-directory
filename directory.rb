@@ -1,4 +1,6 @@
-class print_students
+require 'csv'
+
+class PrintStudents
 
   def initialize(students)
     @@students = students
@@ -53,7 +55,7 @@ class print_students
   def print_menu
     loop do
       puts "-------- Menu --------"
-      menu = ["Print all students", "Print sorted by cohorts", "Print student names beginning with...", "Print names that are shorter than....", "Exit"]
+      menu = ["Print all students", "Print sorted by cohorts", "Print student names beginning with...", "Print names that are shorter than....", "Go back"]
       menu.each_with_index {|option, index| puts "#{index+1}. #{option}" }
       selection = gets.chomp
       print_header if (1..5).include?(selection)
@@ -77,7 +79,7 @@ class print_students
 
 end
 
-class directory
+class Directory
 
   def initialize
     @@students = []
@@ -112,17 +114,29 @@ class directory
     end
   end
 
+  def save_students
+    CSV.open("students.csv", "w") do |csv|
+      csv << @@students.first.keys # adds the attributes name on the first line
+      @@students.each do |student|
+        csv << student.values
+      end
+    end
+    
+  end
+
   def main_menu
     puts "-------- Menu --------"
-    menu = ["Input the students", "Show the students", "Exit"]
+    menu = ["Input the students", "Show the students", "Save student details to file", "Exit"]
     menu.each_with_index {|option, index| puts "#{index+1}. #{option}" }
     selection = gets.chomp
     case selection
       when "1"
         input_students
       when "2"
-        new print_students(@@students)
+        PrintStudents.new(@@students)
       when "3"
+        save_students
+      when "4"
         @@quit = true
       else
         puts "I don't know what you mean, try again"
@@ -130,3 +144,5 @@ class directory
   end
 
 end
+
+Directory.new
