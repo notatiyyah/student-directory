@@ -92,7 +92,7 @@ class Directory
     puts "Enter their cohort, or leave empty for default"
     new_cohort = gets.chomp
     cohort = new_cohort unless new_cohort.empty?
-    puts "List some of their hobbies"
+    puts "Enter one of their hobbies"
     hobbies = gets.chomp
     puts "What is thier country of birth?"
     country_of_birth = gets.chomp
@@ -101,7 +101,18 @@ class Directory
     return cohort, hobbies, country_of_birth, height
   end
   
+  def load_from_file
+    keys = ["name", "cohort", "hobbies", "country_of_birth", "height"]
+    # all keys for hash
+    CSV.foreach("students.csv").with_index do |student, index|
+      student_hash = Hash[keys.map(&:to_sym).zip(student)]
+      # Save each value in the student's row to each key in the list
+      @@students << student_hash unless index == 0
+    end
+  end
+
   def input_students
+    load_from_file
     puts "Please enter the names of the students"
     puts "To finish, just hit return twice"
     name = gets.chomp.split.map(&:capitalize).join(' ')
@@ -117,11 +128,9 @@ class Directory
   def save_students
     CSV.open("students.csv", "w") do |csv|
       csv << @@students.first.keys # adds the attributes name on the first line
-      @@students.each do |student|
-        csv << student.values
-      end
+      @@students.each { |student| csv << student.values }
     end
-    
+    puts "Finished saving"
   end
 
   def main_menu
@@ -142,7 +151,7 @@ class Directory
         puts "I don't know what you mean, try again"
     end
   end
-
+  
 end
 
 Directory.new
