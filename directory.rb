@@ -1,11 +1,15 @@
 def get_extra_data
+  cohort = "November"
+  puts "Enter their cohort, or leave empty for default"
+  new_cohort = gets.chomp
+  cohort = new_cohort unless new_cohort.empty?
   puts "List some of their hobbies"
   hobbies = gets.chomp
   puts "What is thier country of birth?"
   country_of_birth = gets.chomp
   puts "What's their height?"
   height = gets.chomp
-  return hobbies, country_of_birth, height
+  return cohort, hobbies, country_of_birth, height
 end
 
 def input_students
@@ -19,8 +23,8 @@ def input_students
   # while the name is not empty, repeat this code</span>
   while !name.empty?
     # add the student hash to the array</span>
-    hobbies, country_of_birth, height = get_extra_data
-    students << {name: name, cohort: :november, hobbies: hobbies, country_of_birth: country_of_birth, height: height}
+    cohort, hobbies, country_of_birth, height = get_extra_data
+    students << {name: name, cohort: cohort, hobbies: hobbies, country_of_birth: country_of_birth, height: height}
     puts "Now we have #{students.count} student#{students.count == 1 ? "" : "s"}"
     # get another name from the user</span>
     name = gets.chomp
@@ -59,12 +63,20 @@ def print_short_names(students)
   end
 end
 
-def print_footer(names)
-  puts "Overall, we have #{names.count} great students"
+def print_by_cohort(students)
+  all_cohorts = students.group_by {|student| student[:cohort]}
+  all_cohorts.each do |cohort, students|
+    puts cohort
+    students.each { |student| puts student[:name] }
+  end
+end
+
+def print_footer(students)
+  puts "Overall, we have #{students.count} student#{students.count == 1 ? "" : "s"}"
   # print no. of students
 end
 
 students = input_students
 print_header
-print_short_names(students)
+print_by_cohort(students)
 print_footer(students)
