@@ -188,3 +188,9 @@ class Directory
 
 end
 
+def print_source_code
+  this_file = File.basename(__FILE__)
+  File.foreach(this_file) { |line| puts line }
+end
+
+print_source_code
