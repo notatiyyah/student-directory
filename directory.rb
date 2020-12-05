@@ -29,7 +29,7 @@ class PrintStudents
 
   def print_students_beginning_with
     puts "Please enter the initial you want to search with"
-    letter = gets.chomp.upcase
+    letter = $stdin.gets.chomp.upcase
     @@students.each_with_index do |student,index|
       if student[:name][0] == letter
         puts "#{index+1}. #{student[:name]} (#{student[:cohort]} cohort)"
@@ -39,7 +39,7 @@ class PrintStudents
 
   def print_short_names
     puts "Please enter the max name length"
-    length = gets.chomp.to_i
+    length = $stdin.gets.chomp.to_i
     @@students.each_with_index do |student,index|
       if student[:name].length < length
         puts "#{index+1}. #{student[:name]} (#{student[:cohort]} cohort)"
@@ -57,7 +57,7 @@ class PrintStudents
       puts "-------- Menu --------"
       menu = ["Print all students", "Print sorted by cohorts", "Print student names beginning with...", "Print names that are shorter than....", "Go back"]
       menu.each_with_index {|option, index| puts "#{index+1}. #{option}" }
-      selection = gets.chomp
+      selection = $stdin.gets.chomp
       print_header if (1..5).include?(selection)
       case selection
         when "1"
@@ -90,38 +90,27 @@ class Directory
   def get_extra_data
     cohort = "November"
     puts "Enter their cohort, or leave empty for default"
-    new_cohort = gets.chomp
+    new_cohort = $stdin.gets.chomp
     cohort = new_cohort unless new_cohort.empty?
     puts "Enter one of their hobbies"
-    hobbies = gets.chomp
+    hobbies = $stdin.gets.chomp
     puts "What is thier country of birth?"
-    country_of_birth = gets.chomp
+    country_of_birth = $stdin.gets.chomp
     puts "What's their height?"
-    height = gets.chomp
+    height = $stdin.gets.chomp
     return cohort, hobbies, country_of_birth, height
-  end
-  
-  def load_from_file
-    keys = ["name", "cohort", "hobbies", "country_of_birth", "height"]
-    # all keys for hash
-    CSV.foreach("students.csv").with_index do |student, index|
-      student_hash = Hash[keys.map(&:to_sym).zip(student)]
-      # Save each value in the student's row to each key in the list
-      @@students << student_hash unless index == 0
-    end
   end
 
   def input_students
-    load_from_file
     puts "Please enter the names of the students"
     puts "To finish, just hit return twice"
-    name = gets.chomp.split.map(&:capitalize).join(' ')
+    name = $stdin.gets.chomp.split.map(&:capitalize).join(' ')
     # get the input, split it up per word, captialise them all, then join them again
     while !name.empty?
       cohort, hobbies, country_of_birth, height = get_extra_data
       @@students << {name: name, cohort: cohort, hobbies: hobbies, country_of_birth: country_of_birth, height: height}
       puts "Now we have #{@@students.count} student#{@@students.count == 1 ? "" : "s"}"
-      name = gets.chomp
+      name = $stdin.gets.chomp
     end
   end
 
@@ -133,11 +122,39 @@ class Directory
     puts "Finished saving"
   end
 
+  def load_from_file(filename = "students.csv")
+    keys = ["name", "cohort", "hobbies", "country_of_birth", "height"]
+    # all keys for hash
+    CSV.foreach(filename).with_index do |student, index|
+      student_hash = Hash[keys.map(&:to_sym).zip(student)]
+      # Save each value in the student's row to each key in the list
+      @@students << student_hash unless index == 0
+    end
+  end
+
+  def try_load_file
+    filename = ARGV.first # first argument from the command line
+    return if filename.nil?
+    if File.exists?(filename)
+      load_from_file(filename)
+       puts "Loaded #{@@students.count} from #{filename}"
+    else
+      puts "Sorry, #{filename} doesn't exist."
+      exit
+    end
+  end
+
   def main_menu
     puts "-------- Menu --------"
-    menu = ["Input the students", "Show the students", "Save student details to file", "Exit"]
+    menu = [
+      "Input the students",
+      "Show the students",
+      "Save student details to file",
+      "Load student details from file",
+      "Exit"
+    ]
     menu.each_with_index {|option, index| puts "#{index+1}. #{option}" }
-    selection = gets.chomp
+    selection = $stdin.gets.chomp
     case selection
       when "1"
         input_students
@@ -146,12 +163,14 @@ class Directory
       when "3"
         save_students
       when "4"
+        try_load_file
+      when "5"
         @@quit = true
       else
         puts "I don't know what you mean, try again"
     end
   end
-  
+
 end
 
 Directory.new
