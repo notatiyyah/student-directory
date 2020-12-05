@@ -88,17 +88,19 @@ class Directory
   end
 
   def get_extra_data
-    cohort = "November"
-    puts "Enter their cohort, or leave empty for default"
-    new_cohort = $stdin.gets.chomp
-    cohort = new_cohort unless new_cohort.empty?
-    puts "Enter one of their hobbies"
-    hobbies = $stdin.gets.chomp
-    puts "What is thier country of birth?"
-    country_of_birth = $stdin.gets.chomp
-    puts "What's their height?"
-    height = $stdin.gets.chomp
-    return cohort, hobbies, country_of_birth, height
+    prompts = [
+      "Enter their cohort, or leave empty for default",
+      "Enter one of their hobbies",
+      "What is thier country of birth?",
+      "What's their height?"
+    ]
+    responses = ["November"]
+    prompts.each_with_index do |prompt, index|
+      puts prompt
+      response = $stdin.gets.chomp
+      responses[index] = response unless index == 0 && response.empty? 
+    end
+    return responses
   end
 
   def input_students
@@ -114,33 +116,46 @@ class Directory
     end
   end
 
-  def save_students
-    CSV.open("students.csv", "w") do |csv|
-      csv << @@students.first.keys # adds the attributes name on the first line
-      @@students.each { |student| csv << student.values }
+  def save_students(filename)
+    filename = "students.csv" if filename.nil?
+    begin
+      CSV.open(filename, "w") do |csv|
+        csv << @@students.first.keys # adds the attributes name on the first line
+        @@students.each { |student| csv << student.values }
+      end
+      puts "Finished saving #{@@students.length} students from #{filename}"
+    rescue NoMethodError
+      puts "No students to store in #{filename}"
     end
-    puts "Finished saving"
   end
 
-  def load_from_file(filename = "students.csv")
+  def load_from_file(filename)
+    filename = "students.csv" if filename.nil?
     keys = ["name", "cohort", "hobbies", "country_of_birth", "height"]
     # all keys for hash
-    CSV.foreach(filename).with_index do |student, index|
+    index = 0
+    CSV.foreach(filename) do |student|
       student_hash = Hash[keys.map(&:to_sym).zip(student)]
       # Save each value in the student's row to each key in the list
       @@students << student_hash unless index == 0
+      index += 1
     end
+    puts "Loaded #{index} students from #{filename}"
   end
 
-  def try_load_file
+  def get_filename
     filename = ARGV.first # first argument from the command line
-    return if filename.nil?
-    if File.exists?(filename)
-      load_from_file(filename)
-       puts "Loaded #{@@students.count} from #{filename}"
-    else
-      puts "Sorry, #{filename} doesn't exist."
-      exit
+    if filename.nil?
+      puts "Enter the file, leave blank for default"
+      filename = gets.chomp 
+      # if left blank, prompts user for input
+    end
+    unless filename.nil? || filename.empty?
+      if File.exists?(filename)
+        return filename # only returns filename if not nil and if file does exist
+      else
+        puts "Sorry, #{filename} doesn't exist. Loading from default..."
+      end
     end
   end
 
@@ -161,9 +176,9 @@ class Directory
       when "2"
         PrintStudents.new(@@students)
       when "3"
-        save_students
+        save_students(get_filename)
       when "4"
-        try_load_file
+        load_from_file(get_filename)
       when "5"
         @@quit = true
       else
