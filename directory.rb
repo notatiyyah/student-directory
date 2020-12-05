@@ -4,11 +4,11 @@ class PrintStudents
 
   def initialize(students)
     @@students = students
-    @@students.length > 0 ? print_menu : (puts "There are no students at Villains Academy")
+    @@students.length > 0 ? print_menu : (puts "There are no students at Makers Apprenticeships")
   end
 
   def print_header
-    puts "The students of Villains Academy\n-------------"
+    puts "The students of Makers Apprenticeships\n-------------"
     # print banner
   end
 
@@ -58,7 +58,7 @@ class PrintStudents
       menu = ["Print all students", "Print sorted by cohorts", "Print student names beginning with...", "Print names that are shorter than....", "Go back"]
       menu.each_with_index {|option, index| puts "#{index+1}. #{option}" }
       selection = $stdin.gets.chomp
-      print_header if (1..5).include?(selection)
+      print_header if (1..5).include?(selection.to_i)
       case selection
         when "1"
           print_students_list
@@ -73,7 +73,7 @@ class PrintStudents
         else
           puts "I don't know what you mean, try again"
       end
-      print_footer if (1..5).include?(selection)
+      print_footer if (1..5).include?(selection.to_i)
     end
   end
 
@@ -123,7 +123,7 @@ class Directory
         csv << @@students.first.keys # adds the attributes name on the first line
         @@students.each { |student| csv << student.values }
       end
-      puts "Finished saving #{@@students.length} students from #{filename}"
+      puts "Finished saving #{@@students.length} student#{@@students.length == 1 ? "" : "s"} to #{filename}"
     rescue NoMethodError
       puts "No students to store in #{filename}"
     end
@@ -140,7 +140,7 @@ class Directory
       @@students << student_hash unless index == 0
       index += 1
     end
-    puts "Loaded #{index} students from #{filename}"
+    puts "Loaded #{index} student#{@@students.length == 1 ? "" : "s"} from #{filename}"
   end
 
   def get_filename
